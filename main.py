@@ -69,7 +69,7 @@
 # print(now)
 #########################
 
-# Python for web development
+# Build a Python Movie API leveraging cloud infra
 
 from flask import Flask
 
