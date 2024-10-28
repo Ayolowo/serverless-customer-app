@@ -1,5 +1,6 @@
 import logging
 import boto3
+import boto3.dynamodb
 from botocore.exceptions import ClientError
 
 # Create S3 bucket for movie images
@@ -41,3 +42,56 @@ def upload_file(file_name, movies_images, object_name=None):
         logging.error(e)
         return False
     return True
+
+
+# DynamoDB table creation
+
+dynamodb = boto3.resource('dynamodb')
+
+table = dynamodb.create_table(
+    TableName='users',
+    KeySchema=[
+        {
+            'AttributeName': 'moviename',
+            'KeyType': 'HASH'
+        },
+        {
+            'AttributeName': 'summary',
+            'KeyType': 'RANGE'
+        }
+    ],
+    AttributeDefinitions=[
+        {
+            'AttributeName': 'moviename',
+            'AttributeType': 'S'
+        },
+        {
+            'AttributeName': 'year',
+            'AttributeType': 'N'
+        },
+        {
+            'AttributeName': 'summary',
+            'AttributeType': 'S'
+        },
+    ],
+    ProvisionedThroughput={
+        'ReadCapacityUnits': 5,
+        'WriteCapacityUnits': 5
+    }
+)
+
+# Wait until the table exists.
+table.wait_until_exists()
+
+# Print out some data about the table.
+print(table.item_count)
+
+# Place items into the dynamoDB table
+item_1 = {'moviename': 'gemini man','year': 2004,'summary': 'a great movie',}
+item_2 = {'moviename': 'deadpool', 'year': 2024, 'summary': 'a movie filled with beautiful moments'}
+
+items_to_add = [item_1, item_2]
+
+with table.batch_wrtiter() as batch:
+    for item in items_to_add:
+        batch.put_item(Item=items_to_add)
