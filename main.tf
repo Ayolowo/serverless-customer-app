@@ -1,14 +1,5 @@
-# This create an S3 bucket to store movie images
-resource "aws_s3_bucket" "bucket_movies" {
-  bucket = "my-movie-images-bucket"
-
-  tags = {
-    Name = "Movie images"
-  }
-}
-
 # A DynamoDB table to store movie data
-resource "aws_dynamodb_table" "movies-table" {
+resource "aws_dynamodb_table" "Movies" {
   name           = "Movies"
   billing_mode   = "PROVISIONED"
   read_capacity  = 20
