@@ -1,7 +1,14 @@
+from decimal import Decimal
+from io import BytesIO
+import json
 import logging
+import os
+from pprint import pprint
+from zipfile import ZipFile
 import boto3
 import boto3.dynamodb
 import botocore
+from boto3.dynamodb.conditions import Key
 from botocore.exceptions import ClientError
 
 # Create S3 bucket for movie images
@@ -80,8 +87,8 @@ table = dynamodb.create_table(
         },
     ],
     ProvisionedThroughput={
-        'ReadCapacityUnits': 5,
-        'WriteCapacityUnits': 5
+        'ReadCapacityUnits': 10,
+        'WriteCapacityUnits': 10
     }
 )
 

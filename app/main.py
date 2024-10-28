@@ -1,3 +1,6 @@
+# PRACTICE FILE FOR PYTHON CODING
+
+
 # class Person:
 #     def __init__(self, name, age):
 #         self.name = name
@@ -71,10 +74,10 @@
 
 # Build a Python Movie API leveraging cloud infra
 
-from flask import Flask
+# from flask import Flask
 
-app = Flask(__name__)
+# app = Flask(__name__)
 
-@app.route('/')
-def hello_world():
-    return 'Hello, World!'
+# @app.route('/')
+# def hello_world():
+#     return 'Hello, World!'

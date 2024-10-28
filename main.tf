@@ -37,7 +37,7 @@ resource "aws_lambda_function" "terraform_function" {
   depends_on = [aws_iam_role.iam_for_lambda]
 }
 
-# To get logs of our lambda functions
+# To get logs of our lambda functions | retention days for how long to keep logs
 resource "aws_cloudwatch_log_group" "lambda_log_group" {
   name              = "/aws/lambda/hello_world_lambda"
   retention_in_days = 14
