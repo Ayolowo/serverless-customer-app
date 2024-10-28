@@ -1,10 +1,11 @@
 import logging
 import boto3
 import boto3.dynamodb
+import botocore
 from botocore.exceptions import ClientError
 
 # Create S3 bucket for movie images
-def create_bucket(movies_images, region=us-east-1):
+def create_bucket(movies_images, region='us-east-1'):
     try:
         if region is None:
             s3_client = boto3.resource('s3')
@@ -52,25 +53,29 @@ table = dynamodb.create_table(
     TableName='users',
     KeySchema=[
         {
-            'AttributeName': 'moviename',
+            'AttributeName': 'title',
             'KeyType': 'HASH'
         },
         {
-            'AttributeName': 'summary',
+            'AttributeName': 'genre',
             'KeyType': 'RANGE'
         }
     ],
     AttributeDefinitions=[
         {
-            'AttributeName': 'moviename',
+            'AttributeName': 'title',
             'AttributeType': 'S'
         },
         {
-            'AttributeName': 'year',
+            'AttributeName': 'releaseYear',
             'AttributeType': 'N'
         },
         {
-            'AttributeName': 'summary',
+            'AttributeName': 'genre',
+            'AttributeType': 'S'
+        },
+        {
+            'AttributeName': 'coverUrl',
             'AttributeType': 'S'
         },
     ],
@@ -87,8 +92,8 @@ table.wait_until_exists()
 print(table.item_count)
 
 # Place items into the dynamoDB table
-item_1 = {'moviename': 'gemini man','year': 2004,'summary': 'a great movie',}
-item_2 = {'moviename': 'deadpool', 'year': 2024, 'summary': 'a movie filled with beautiful moments'}
+item_1 = {'title': 'gemini man','releaseYear': 2004,'genre': 'Science Fiction, Action', 'coverUrl':'www.url.com'}
+item_2 = {'title': 'deadpool', 'releaseYear': 2024, 'genre': 'Action, Blood, humour, Violence'}
 
 items_to_add = [item_1, item_2]
 

@@ -1,39 +1,45 @@
-# A DynamoDB table to store movie data
-resource "aws_dynamodb_table" "Movies" {
-  name           = "Movies"
-  billing_mode   = "PROVISIONED"
-  read_capacity  = 20
-  write_capacity = 20
-  hash_key       = "UserId"
-  range_key      = "GameTitle"
+# Create a lambda function to run python code
+data "aws_iam_policy_document" "assume_role" {
+  statement {
+    effect = "Allow"
 
-  attribute {
-    name = "UserId"
-    type = "S"
+    principals {
+      type        = "Service"
+      identifiers = ["lambda.amazonaws.com"]
+    }
+
+    actions = ["sts:AssumeRole"]
   }
+}
 
-  attribute {
-    name = "GameTitle"
-    type = "S"
-  }
+resource "aws_iam_role" "iam_for_lambda" {
+  name               = "iam_for_lambda"
+  assume_role_policy = data.aws_iam_policy_document.assume_role.json
+}
 
-  attribute {
-    name = "TopScore"
-    type = "N"
-  }
+data "archive_file" "lambda" {
+  type        = "zip"
+  source_file = "${path.module}/app/"
+  output_path = "${path.module}/app/main.zip"
+}
 
-  ttl {
-    attribute_name = "TimeToExist"
-    enabled        = true
-  }
+resource "aws_lambda_function" "terra_lambda_function" {
+  # If the file is not in the current working directory you will need to include a
+  # path.module in the filename.
+  filename      = "${path.module}/app/main.zip"
+  function_name = "movies_lambda_function"
+  role          = aws_iam_role.iam_for_lambda.arn
+  handler       = "main.lambda_handler"
 
-  global_secondary_index {
-    name               = "GameTitleIndex"
-    hash_key           = "GameTitle"
-    range_key          = "TopScore"
-    write_capacity     = 10
-    read_capacity      = 10
-    projection_type    = "INCLUDE"
-    non_key_attributes = ["UserId"]
+  source_code_hash = data.archive_file.lambda.output_base64sha256
+
+  runtime    = "python 3.12"
+  depends_on = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role]
+
+
+  environment {
+    variables = {
+      foo = "bar"
+    }
   }
 }
