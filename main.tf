@@ -23,7 +23,7 @@ data "archive_file" "lambda" {
   output_path = "${path.module}/app/main.zip"
 }
 
-resource "aws_lambda_function" "terra_lambda_function" {
+resource "aws_lambda_function" "terraform_function" {
   # If the file is not in the current working directory you will need to include a
   # path.module in the filename.
   filename      = "${path.module}/app/main.zip"
@@ -33,13 +33,12 @@ resource "aws_lambda_function" "terra_lambda_function" {
 
   source_code_hash = data.archive_file.lambda.output_base64sha256
 
-  runtime    = "python 3.12"
-  depends_on = [aws_iam_role_policy_attachment.attach_iam_policy_to_iam_role]
+  runtime    = "python3.12"
+  depends_on = [aws_iam_role.iam_for_lambda]
+}
 
-
-  environment {
-    variables = {
-      foo = "bar"
-    }
-  }
+# To get logs of our lambda functions
+resource "aws_cloudwatch_log_group" "lambda_log_group" {
+  name              = "/aws/lambda/hello_world_lambda"
+  retention_in_days = 14
 }
