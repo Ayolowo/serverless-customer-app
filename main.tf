@@ -19,17 +19,17 @@ resource "aws_iam_role" "iam_for_lambda" {
 
 data "archive_file" "lambda" {
   type        = "zip"
-  source_file = "${path.module}/app/"
-  output_path = "${path.module}/app/main.zip"
+  source_file = "${path.module}/app/app.py"
+  output_path = "${path.module}/app/app.zip"
 }
 
 resource "aws_lambda_function" "terraform_function" {
   # If the file is not in the current working directory you will need to include a
   # path.module in the filename.
-  filename      = "${path.module}/app/main.zip"
+  filename      = "${path.module}/app/app.zip"
   function_name = "movies_lambda_function"
   role          = aws_iam_role.iam_for_lambda.arn
-  handler       = "main.lambda_handler"
+  handler       = "app.lambda_handler"
 
   source_code_hash = data.archive_file.lambda.output_base64sha256
 
@@ -38,7 +38,7 @@ resource "aws_lambda_function" "terraform_function" {
 }
 
 # To get logs of our lambda functions | retention days for how long to keep logs
-resource "aws_cloudwatch_log_group" "lambda_log_group" {
-  name              = "/aws/lambda/hello_world_lambda"
-  retention_in_days = 14
-}
+# resource "aws_cloudwatch_log_group" "lambda_log_group" {
+#   name              = "/aws/lambda/hello_world_lambda"
+#   retention_in_days = 14
+# }
