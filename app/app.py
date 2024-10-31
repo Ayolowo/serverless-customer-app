@@ -183,6 +183,34 @@ class Movies:
                 err.response["Error"]["Message"],
             )
             raise
+        
+    def get_all_movies(self):
+        """
+        Gets movie data from the table for a specific movie.
+
+        :param title: The title of the movie.
+        :param year: The release year of the movie.
+        :return: The data about the requested movie.
+        """
+        try:
+            response = self.table.scan()
+            movies = response.get("Items", [])
+        
+        # If there are more items to retrieve, continue scanning
+            while "LastEvaluatedKey" in response:
+                response = self.table.scan(ExclusiveStartKey=response["LastEvaluatedKey"])
+                movies.extend(response.get("Items", []))    
+       
+        except ClientError as err:
+            logger.error(
+                "Couldn't get movie %s from table %s. Here's why: %s: %s",
+                self.table.name,
+                err.response["Error"]["Code"],
+                err.response["Error"]["Message"],
+            )
+            raise
+        else:
+            return movies    
 
     def query_movies(self, year):
         """
@@ -272,6 +300,24 @@ def run_scenario(movies_table, movie_file_name, dyn_resource):
         movies.write_batch(movie_data)
         print(f"\nWrote {len(movie_data)} movies into {movies.table.name}.")
     print("-" * 88)
+    
+    if not movies_exists:
+        movie_data = get_sample_movie_data(movie_file_name)
+        print(f"\nReading data from '{movie_file_name}' into your table.")
+        movies.write_batch(movie_data)
+        print(f"\nWrote {len(movie_data)} movies into {movies.table.name}.")
+    print("-" * 88)
+
+# Get all movies in the table
+    if Question.ask_question(
+        f"Let's move on...do you want to get info about every movie? in '{movies_table}'? (y/n) ",
+        Question.is_yesno,
+    ):
+        all_movies = movies.get_all_movies()
+        for movie in all_movies:
+            print("\nHere's what I found:")
+            print(movie)
+    print("-" * 88)
 
     # To query movies by year
     ask_for_year = True
@@ -280,7 +326,7 @@ def run_scenario(movies_table, movie_file_name, dyn_resource):
             f"\nLet's get a list of movies released in a given year. Enter a year between "
             f"1972 and 2018: ",
             Question.is_int,
-            Question.in_range(1972, 2018),
+            Question.in_range(1972, 2024),
         )
         releases = movies.query_movies(release_year)
         if releases:
@@ -294,6 +340,18 @@ def run_scenario(movies_table, movie_file_name, dyn_resource):
                 "Try another year? (y/n) ", Question.is_yesno
             )
     print("-" * 88)
+    
+    if Question.ask_question(f"\nDelete the table? (y/n) ", Question.is_yesno):
+        movies.delete_table()
+        print(f"Deleted {movies_table}.")
+    else:
+        print(
+            "Don't forget to delete the table when you're done or you might incur "
+            "charges on your account."
+        )
+
+    print("\nThanks for watching!")
+    print("-" * 88)
 
 if __name__ == "__main__":
     # Define the name of your JSON file here
@@ -301,7 +359,7 @@ if __name__ == "__main__":
 
     try:
         run_scenario(
-            "doc-example-table-movies", movie_file_name, boto3.resource("dynamodb")
+            "Table-for-movies", movie_file_name, boto3.resource("dynamodb")
         )
     except Exception as e:
         print(f"Something went wrong with the demo! Here's what: {e}")
