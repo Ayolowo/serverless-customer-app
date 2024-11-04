@@ -190,9 +190,10 @@ class Movies:
 
         :return: The data about the requested movies.
         """
+        movies = []
         try:
             response = self.table.scan()
-            movies = response.get("Items", [])
+            movies.extend(response.get("Items", []))
         
         # If there are more items to retrieve, continue scanning
             while "LastEvaluatedKey" in response:
@@ -202,7 +203,6 @@ class Movies:
         except ClientError as err:
             logger.error(
                 "Couldn't get movie %s from table %s. Here's why: %s: %s",
-                self.table.name,
                 err.response["Error"]["Code"],
                 err.response["Error"]["Message"],
             )
@@ -303,13 +303,16 @@ def run_scenario(movies_table, movie_file_name, dyn_resource):
     if Question.ask_question(
         f"Let's move on...do you want to get info about every movie? in '{movies_table}'? (y/n) ",
         Question.is_yesno,
-    ):
+    ):  
         all_movies = movies.get_all_movies()
         print("\nHere's what I found:")
-        for movie in all_movies:
-            movie = json.dumps(movie, indent=4, sort_keys=False)
-            movie = "\n" + movie + "\n"
-            print(movie)
+        all_movies = json.dumps(all_movies, indent=4, sort_keys=False)
+        all_movies = "\n" + all_movies + "\n"
+        print(all_movies)
+        # for movie in all_movies:
+        #     movie = json.dumps(movie, indent=4, sort_keys=False)
+        #     movie = "\n" + movie + "\n"
+        #     print(movie)
     print("-" * 88)
 
     # To query movies by year
