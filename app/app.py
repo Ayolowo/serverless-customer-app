@@ -307,7 +307,7 @@ def run_scenario(movies_table, movie_file_name, dyn_resource):
         all_movies = movies.get_all_movies()
         for movie in all_movies:
             print("\nHere's what I found:")
-            pprint(movie, indent=1, width=160, sort_dicts=False)
+            pprint(movie, indent=1, sort_dicts=False)
     print("-" * 88)
 
     # To query movies by year
@@ -341,7 +341,7 @@ def run_scenario(movies_table, movie_file_name, dyn_resource):
             "charges on your account."
         )
 
-    print("\nThanks for watching!")
+    print("\nThanks for using my custom DynamDB table!")
     print("-" * 88)
 
 if __name__ == "__main__":
