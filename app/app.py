@@ -1,7 +1,7 @@
 from decimal import Decimal
 import requests
 from io import BytesIO
-import json
+import simplejson as json
 import logging
 import os
 from pprint import pprint
@@ -38,7 +38,7 @@ s3 = boto3.client('s3')
 response = s3.list_buckets()
 
 # Output the bucket names
-print('Existing buckets:')
+#print('Existing buckets:')
 for bucket in response['Buckets']:
     print(f'  {bucket["Name"]}')
 
@@ -186,11 +186,9 @@ class Movies:
         
     def get_all_movies(self):
         """
-        Gets movie data from the table for a specific movie.
+        Gets movie data from the table for all movies.
 
-        :param title: The title of the movie.
-        :param year: The release year of the movie.
-        :return: The data about the requested movie.
+        :return: The data about the requested movies.
         """
         try:
             response = self.table.scan()
@@ -298,14 +296,7 @@ def run_scenario(movies_table, movie_file_name, dyn_resource):
         movie_data = get_sample_movie_data(movie_file_name)
         print(f"\nReading data from '{movie_file_name}' into your table.")
         movies.write_batch(movie_data)
-        print(f"\nWrote {len(movie_data)} movies into {movies.table.name}.")
-    print("-" * 88)
-    
-    if not movies_exists:
-        movie_data = get_sample_movie_data(movie_file_name)
-        print(f"\nReading data from '{movie_file_name}' into your table.")
-        movies.write_batch(movie_data)
-        print(f"\nWrote {len(movie_data)} movies into {movies.table.name}.")
+        print(f"\nWrote {len(movie_data)} movies into {movies_table}.")
     print("-" * 88)
 
 # Get all movies in the table
@@ -316,7 +307,7 @@ def run_scenario(movies_table, movie_file_name, dyn_resource):
         all_movies = movies.get_all_movies()
         for movie in all_movies:
             print("\nHere's what I found:")
-            print(movie)
+            pprint(movie, indent=1, width=160, sort_dicts=False)
     print("-" * 88)
 
     # To query movies by year
