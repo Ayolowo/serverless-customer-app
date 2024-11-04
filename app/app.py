@@ -305,9 +305,11 @@ def run_scenario(movies_table, movie_file_name, dyn_resource):
         Question.is_yesno,
     ):
         all_movies = movies.get_all_movies()
+        print("\nHere's what I found:")
         for movie in all_movies:
-            print("\nHere's what I found:")
-            pprint(movie, indent=1, sort_dicts=False)
+            movie = json.dumps(movie, indent=4, sort_keys=False)
+            movie = "\n" + movie + "\n"
+            print(movie)
     print("-" * 88)
 
     # To query movies by year
