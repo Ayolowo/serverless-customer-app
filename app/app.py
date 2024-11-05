@@ -318,20 +318,22 @@ def run_scenario(movies_table, movie_file_name, dyn_resource):
     # To query movies by year
     ask_for_year = True
     while ask_for_year:
-        release_year = Question.ask_question(
+        year = Question.ask_question(
             f"\nLet's get a list of movies released in a given year. Enter a year between "
-            f"1972 and 2018: ",
+            f"1994 and 2008: ",
             Question.is_int,
-            Question.in_range(1972, 2024),
+            Question.in_range(1994, 2008),
         )
-        releases = movies.query_movies(release_year)
+        releases = movies.query_movies(year)
         if releases:
-            print(f"There were {len(releases)} movies released in {release_year}:")
-            for release in releases:
-                print(f"\t{release['title']}")
+            print(f"There were {len(releases)} movies released in {year}:")
+            
+            releases = json.dumps(releases, indent=4, sort_keys=False)
+            releases = "\n" + releases + "\n"
+            print(releases)
             ask_for_year = False
         else:
-            print(f"I don't know about any movies released in {release_year}!")
+            print(f"I don't know about any movies released in {year}!")
             ask_for_year = Question.ask_question(
                 "Try another year? (y/n) ", Question.is_yesno
             )
