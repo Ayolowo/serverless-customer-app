@@ -356,8 +356,6 @@ if __name__ == "__main__":
     movie_file_name = 'moviedata.json'
 
     try:
-        run_scenario(
-            "Table-for-movies", movie_file_name, boto3.resource("dynamodb")
-        )
+        run_scenario("Table-for-movies", movie_file_name, boto3.resource("dynamodb"))
     except Exception as e:
         print(f"Something went wrong with the demo! Here's what: {e}")
