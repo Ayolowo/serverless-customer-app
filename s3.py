@@ -1,19 +1,5 @@
-# import random
-# import string
-# import time
-
-# def generate_custom_id():
-#     timestamp = str(int(time.time()))
-#     random_chars = ''.join(random.choices(string.ascii_uppercase + string.digits, k=6))
-#     return f"ID-{timestamp}-{random_chars}"
-
-# custom_id = generate_custom_id()
-
-# print(custom_id)
-
 import boto3
 import boto3.dynamodb
-import botocore
 from boto3.dynamodb.conditions import Key
 from botocore.exceptions import ClientError
 import logging
@@ -30,7 +16,6 @@ def bucket_exists(bucket_name, region='us-east-1'):
     s3 = boto3.client('s3')
     try:
         s3.head_bucket(Bucket=bucket_name)
-        print(f"Bucket '{bucket_name}' already exists in '{region}'")
         return True
     except ClientError as e:
         if e.response['Error']['Code'] == '404':
@@ -43,7 +28,7 @@ def bucket_exists(bucket_name, region='us-east-1'):
 def create_s3_bucket(bucket_name, region='us-east-1'):
     # Call the bucket_exists function to check for existence
     if bucket_exists(bucket_name, region='us-east-1'):
-        print(f"Bucket '{bucket_name}' already exists")
+        print(f"Bucket '{bucket_name}' already exists in '{region}'")
         return True
     
     try:
@@ -113,7 +98,7 @@ class S3BucketManager:
         self.s3 = boto3.client('s3', region_name=region)
 
     def delete_bucket(self):
-        confirm = input(f"Are you sure you want to delete the bucket '{self.bucket_name}'? (yes/no): ").strip().lower()
+        confirm = input(f"Do you want to delete the bucket '{self.bucket_name}'? (yes/no): ").strip().lower()
         if confirm != 'yes':
             print("Bucket deletion canceled.")
             return
