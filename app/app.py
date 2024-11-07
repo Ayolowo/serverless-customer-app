@@ -31,29 +31,15 @@ class Movies:
     """Encapsulates an Amazon DynamoDB table of movie data.
 
     Example data structure for a movie record in this table:
-        {
-            "year": 1999,
-            "title": "For Love of the Game",
-            "info": {
-                "directors": ["Sam Raimi"],
-                "release_date": "1999-09-15T00:00:00Z",
-                "rating": 6.3,
-                "plot": "A washed up pitcher flashes through his career.",
-                "rank": 4987,
-                "running_time_secs": 8220,
-                "actors": [
-                    "Kevin Costner",
-                    "Kelly Preston",
-                    "John C. Reilly"
-                ]
-            }
-        }
+    {
+        "title": "Inception",
+        "year": 2010,
+        "genre": "Science Fiction, Action",
+        "coverUrl": "https://example.com/inception.jpg"
+     }
     """
 
     def __init__(self, dyn_resource):
-        """
-        :param dyn_resource: A Boto3 DynamoDB resource.
-        """
         self.dyn_resource = dyn_resource
         # The table variable is set during the scenario in the call to
         # 'exists' if the table exists. Otherwise, it is set by 'create_table'.
@@ -92,8 +78,8 @@ class Movies:
         The table uses the title of the movie as the partition key and the
         release year as the sort key.
 
-        :param movies_table: The name of the table to create.
-        :return: The newly created table.
+        :param TableName: The name of the table to create.
+        :return(self.table): The newly created table.
         """
         try:
             self.table = self.dyn_resource.create_table(
@@ -134,7 +120,7 @@ class Movies:
 
         :param movies: The data to put in the table. Each item must contain at least
                        the keys required by the schema that was specified when the
-                       table was created.
+                       table was created i.e. title and year in this case.
         """
         try:
             with self.table.batch_writer() as writer:
@@ -150,11 +136,7 @@ class Movies:
             raise
         
     def get_all_movies(self):
-        """
-        Gets movie data from the table for all movies.
-
-        :return: The data about the requested movies.
-        """
+        # To return all movies in an array
         movies = []
         try:
             response = self.table.scan()
@@ -180,7 +162,7 @@ class Movies:
         Queries for movies that were released in the specified year.
 
         :param year: The year to query.
-        :return: The list of movies that were released in the specified year.
+        :return: The list of movies that were released in the specified year(in a JSON list format).
         """
         try:
             response = self.table.scan(FilterExpression=Key("year").eq(year))
@@ -234,11 +216,10 @@ def get_sample_movie_data(movie_file_name):
     except FileNotFoundError:
         print(
             f"File {movie_file_name} not found. You must first download the file to "
-            "run this demo. See the README for instructions."
         )
         raise
     else:
-        # The file has over 4000 movies, the below code returns only the first 250.
+        # The below code returns only the first 250.
         return movie_data[:250]
 
 
@@ -246,7 +227,7 @@ def run_scenario(movies_table, movie_file_name, dyn_resource):
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
     print("-" * 88)
-    print("Welcome to the Amazon DynamoDB getting started demo.")
+    print("Welcome to the Amazon DynamoDB movies store.")
     print("-" * 88)
 
     movies = Movies(dyn_resource)
@@ -256,7 +237,6 @@ def run_scenario(movies_table, movie_file_name, dyn_resource):
         movies.create_table(movies_table)
         print(f"\nCreated table {movies.table.name}.")
         
-    # Movie management setup end
     if not movies_exists:
         movie_data = get_sample_movie_data(movie_file_name)
         print(f"\nReading data from '{movie_file_name}' into your table.")
@@ -266,7 +246,7 @@ def run_scenario(movies_table, movie_file_name, dyn_resource):
 
 # Get all movies in the table
     if Question.ask_question(
-        f"Let's move on...do you want to get info about every movie? in '{movies_table}'? (y/n) ",
+        f"Let's move on...do you want to get info about every available movie? in '{movies_table}'? (y/n) ",
         Question.is_yesno,
     ):  
         all_movies = movies.get_all_movies()
@@ -274,10 +254,6 @@ def run_scenario(movies_table, movie_file_name, dyn_resource):
         all_movies = json.dumps(all_movies, indent=4, sort_keys=False)
         all_movies = "\n" + all_movies + "\n"
         print(all_movies)
-        # for movie in all_movies:
-        #     movie = json.dumps(movie, indent=4, sort_keys=False)
-        #     movie = "\n" + movie + "\n"
-        #     print(movie)
     print("-" * 88)
 
     # To query movies by year
@@ -300,7 +276,7 @@ def run_scenario(movies_table, movie_file_name, dyn_resource):
         else:
             print(f"I don't know about any movies released in {year}!")
             ask_for_year = Question.ask_question(
-                "Try another year? (y/n) ", Question.is_yesno
+                "Would you like to try another year? (y/n) ", Question.is_yesno
             )
     print("-" * 88)
     
