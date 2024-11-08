@@ -12,29 +12,29 @@ data "aws_iam_policy_document" "assume_role" {
   }
 }
 
-resource "aws_iam_role" "iam_for_lambda" {
-  name               = "iam_for_lambda"
+resource "aws_iam_role" "iam_role_lambda" {
+  name               = "iam_role_lambda"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
 
-data "archive_file" "lambda" {
-  type        = "zip"
-  source_file = "${path.module}/app/app.py"
-  output_path = "${path.module}/app/app.zip"
-}
+# data "archive_file" "lambda" {
+#   type        = "zip"
+#   source_file = "${path.module}/app/app.py"
+#   output_path = "${path.module}/app/app.zip"
+# }
 
 resource "aws_lambda_function" "terraform_function" {
   # If the file is not in the current working directory you will need to include a
   # path.module in the filename.
-  filename      = "${path.module}/app/app.zip"
-  function_name = "movies_lambda_function"
-  role          = aws_iam_role.iam_for_lambda.arn
-  handler       = "app.lambda_handler"
+  filename      = "${path.module}/Lambda/lambda_function.zip"
+  function_name = "movies_function"
+  role          = aws_iam_role.iam_role_lambda.arn
+  handler       = "lambda_function.lambda_handler"
 
-  source_code_hash = data.archive_file.lambda.output_base64sha256
+  # source_code_hash = data.archive_file.lambda.output_base64sha256
 
   runtime    = "python3.12"
-  depends_on = [aws_iam_role.iam_for_lambda]
+  depends_on = [aws_iam_role.iam_role_lambda]
 }
 
 # To get logs of our lambda functions | retention days for how long to keep logs
