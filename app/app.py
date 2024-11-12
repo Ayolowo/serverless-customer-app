@@ -18,7 +18,7 @@ from question import Question
 logger = logging.getLogger(__name__)
 
 
-# Lambda function to run code
+# Lambda function to run python script
 def lambda_handler(event, context):
     # Function code goes here
     return {
