@@ -71,7 +71,7 @@ class Movies:
         else:
             self.table = table
         return exists
-
+#function to create table
     def create_table(self, movies_table):
         """
         Creates an Amazon DynamoDB table that can be used to store movie data.
