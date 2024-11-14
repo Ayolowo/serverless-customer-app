@@ -138,7 +138,6 @@ class Movies:
             )
             raise
         
-    @app.get('/movies/{self}')
     def get_all_movies(self):
         # To return all movies in an array
         movies = []
