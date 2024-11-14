@@ -8,10 +8,12 @@ from pprint import pprint
 from zipfile import ZipFile
 import boto3
 import boto3.dynamodb
-import botocore
 from boto3.dynamodb.conditions import Key
 from botocore.exceptions import ClientError
 from question import Question
+from fastapi import FastAPI
+
+app = FastAPI()
 
 
 # Used to track/log events that happen as your program runs
@@ -71,7 +73,8 @@ class Movies:
         else:
             self.table = table
         return exists
-#function to create table
+
+
     def create_table(self, movies_table):
         """
         Creates an Amazon DynamoDB table that can be used to store movie data.
@@ -135,6 +138,7 @@ class Movies:
             )
             raise
         
+    @app.get('/movies/{self}')
     def get_all_movies(self):
         # To return all movies in an array
         movies = []
@@ -299,4 +303,4 @@ if __name__ == "__main__":
     try:
         run_scenario("Table-for-movies", movie_file_name, boto3.resource("dynamodb"))
     except Exception as e:
-        print(f"Something went wrong with the demo! Here's what: {e}")
+        print(f"Something went wrong! Here's what: {e}")

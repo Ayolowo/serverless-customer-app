@@ -1,173 +1,60 @@
-# PRACTICE FILE FOR PYTHON CODING
-
-
-# class Person:
-#     def __init__(self, name, age):
-#         self.name = name
-#         self.age = age
-    
-#     def speak(self):
-#         print("my name is {} and i'm {} years old.".format(self.name, self.age))
-
-# class Student(Person):
-#     def __init__(self, name, age, school):
-#         super().__init__(name, age)
-#         self.school = school
-
-#     def speak(self):
-#         print("my name is {} and i'm {} years old and I graduated from {}.".format(self.name, self.age, self.school))
-
-# person = Person("Ayomide", 28)
-# student = Student ("Ayomide", 28, "Bells")
-
-# person.speak()
-# student.speak()
-
-#########################################
-# Python tester
-
-# import unittest
-
-# def is_prime(n):
-#     if n < 2:
-#         return False
-#     for i in range(2, n):
-#         if n % i == 0:
-#             return False
-#     return True
-
-# class TestIsPrime(unittest.TestCase):
-#     def test_is_prime(self):
-#         self.assertTrue(is_prime(2))
-#         self.assertTrue(is_prime(3))
-#         self.assertTrue(is_prime(5))
-#         self.assertFalse(is_prime(4))
-
-# if __name__ == '__main__':
-#     unittest.main()
-
-###################################
-# Python regular expressions
-
-# import re
-
-# # number extraction from string
-# text = 'my phone number is 23432-342'
-# match = re.findall('\d+\.\d+|\d+', text)
-# print(match)
-
-#######################
-# # email extraction
-
-# text = 'my email is ayolowo9@gmail.com and stotube20@gmail.com'
-# matches = re.findall(r'\S+@\S+', text)    
-# print(matches)
-
-#####################
-# Date and time import
-
-# from datetime import datetime, timedelta
-
-# now = datetime.now()
-# print(now)
-#########################
-
-# Build a Python Movie API leveraging cloud infra
-
-# from flask import Flask
-
-# app = Flask(__name__)
-
-# @app.route('/')
-# def hello_world():
-#     return 'Hello, World!'
-
+from decimal import Decimal
+import requests
+from io import BytesIO
+import simplejson as json
 import logging
-from botocore.exceptions import ClientError
+import os
+from zipfile import ZipFile
+import boto3
 from boto3.dynamodb.conditions import Key
+from botocore.exceptions import ClientError
+from fastapi import FastAPI, HTTPException
+from typing import List
 
+app = FastAPI()
 logger = logging.getLogger(__name__)
-def query_movies(self, year):
-        """
-        Queries for movies that were released in the specified year.
 
-        :param year: The year to query.
-        :return: The list of movies that were released in the specified year.
-        """
+class Movies:
+    def __init__(self, dyn_resource, movies_table: str):
+        self.dyn_resource = dyn_resource
+        self.table = self.dyn_resource.Table(movies_table)
+
+    def get_all_movies(self) -> List[dict]:
+        movies = []
         try:
-            response = self.table.query(KeyConditionExpression=Key("year").eq(year))
+            response = self.table.scan()
+            movies.extend(response.get("Items", []))
+            while "LastEvaluatedKey" in response:
+                response = self.table.scan(ExclusiveStartKey=response["LastEvaluatedKey"])
+                movies.extend(response.get("Items", []))
         except ClientError as err:
-            logger.error(
-                "Couldn't query for movies released in %s. Here's why: %s: %s",
-                year,
-                err.response["Error"]["Code"],
-                err.response["Error"]["Message"],
+            logger.error("Error retrieving movies: %s", err)
+            raise HTTPException(status_code=500, detail="Error retrieving movies.")
+        return movies
+
+    def query_movies(self, year: int) -> List[dict]:
+        try:
+            response = self.table.query(
+                KeyConditionExpression=Key("year").eq(year)
             )
-            raise
-        else:
-            return response["Items"]
+            return response.get("Items", [])
+        except ClientError as err:
+            logger.error("Error querying movies by year: %s", err)
+            raise HTTPException(status_code=500, detail="Error querying movies by year.")
 
-#################################
+# Define DynamoDB resource and Movies instance
+dynamodb = boto3.resource("dynamodb")
+movies_table = "Table-for-movies"
+movies_instance = Movies(dynamodb, movies_table)
 
-# DynamoDB table creation
-"""
-        Creates an Amazon DynamoDB table that can be used to store movie data.
-        The table uses the titlr of the movie as the partition key and the
-        releaseYear as the sort key.
+# Define API endpoints
+@app.get("/movies", response_model=List[dict])
+def get_all_movies():
+    return movies_instance.get_all_movies()
 
-        :param table_name: The name of the table to create.
-        :return: The newly created table.
-        """
-dynamodb = boto3.resource('dynamodb')
-
-table = dynamodb.create_table(
-    TableName='users',
-    KeySchema=[
-        {
-            'AttributeName': 'title',
-            'KeyType': 'HASH'
-        },
-        {
-            'AttributeName': 'releaseYear',
-            'KeyType': 'RANGE'
-        }
-    ],
-    AttributeDefinitions=[
-        {
-            'AttributeName': 'title',
-            'AttributeType': 'S'
-        },
-        {
-            'AttributeName': 'releaseYear',
-            'AttributeType': 'N'
-        },
-        {
-            'AttributeName': 'genre',
-            'AttributeType': 'S'
-        },
-        {
-            'AttributeName': 'coverUrl',
-            'AttributeType': 'S'
-        },
-    ],
-    ProvisionedThroughput={
-        'ReadCapacityUnits': 10,
-        'WriteCapacityUnits': 10
-    }
-)
-
-# Wait until the table exists.
-table.wait_until_exists()
-
-# Print out some data about the table.
-print(table.item_count)
-
-# Place items into the dynamoDB table
-item_1 = {'title': 'gemini man','releaseYear': 2004,'genre': 'Science Fiction, Action', 'coverUrl':'www.url.com'}
-item_2 = {'title': 'deadpool', 'releaseYear': 2024, 'genre': 'Action, Blood, humour, Violence'}
-
-items_to_add = [item_1, item_2]
-
-with table.batch_wrtiter() as batch:
-    for item in items_to_add:
-        batch.put_item(Item=items_to_add)
+@app.get("/movies/{year}", response_model=List[dict])
+def get_movies_by_year(year: int):
+    movies = movies_instance.query_movies(year)
+    if not movies:
+        raise HTTPException(status_code=404, detail="No movies found for the specified year.")
+    return movies
