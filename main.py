@@ -11,8 +11,10 @@ from boto3.dynamodb.conditions import Key
 from botocore.exceptions import ClientError
 from fastapi import FastAPI, HTTPException
 from typing import List
+import magnum
 
 app = FastAPI()
+handler = magnum
 logger = logging.getLogger(__name__)
 
 class Movies:

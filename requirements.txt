@@ -1,4 +1,6 @@
-boto3>1.26.79
+boto3
 pytest>7.2.1
 requests>2.28.2
 simplejson
+fastapi==0.99.0
+Magnum
