@@ -3,7 +3,7 @@ import requests
 from io import BytesIO
 import simplejson as json
 import logging
-from question import Question
+# from question import Question
 import os
 from zipfile import ZipFile
 import boto3
@@ -11,10 +11,10 @@ from boto3.dynamodb.conditions import Key
 from botocore.exceptions import ClientError
 from fastapi import FastAPI, HTTPException
 from typing import List
-import magnum
+from mangum import Mangum
 
 app = FastAPI()
-handler = magnum
+handler = Mangum(app)
 logger = logging.getLogger(__name__)
 
 class Movies:
@@ -204,17 +204,17 @@ def run_scenario(movies_table, movie_file_name, dyn_resource):
         print(f"\nWrote {len(movie_data)} movies into {movies_table}.")
     print("-" * 88)
 
-    if Question.ask_question(f"\nDelete the table? (y/n) ", Question.is_yesno):
-        movies.delete_table()
-        print(f"Deleted {movies_table}.")
-    else:
-        print(
-            "Don't forget to delete the table when you're done or you might incur "
-            "charges on your account."
-        )
+    # if Question.ask_question(f"\nDelete the table? (y/n) ", Question.is_yesno):
+    #     movies.delete_table()
+    #     print(f"Deleted {movies_table}.")
+    # else:
+    #     print(
+    #         "Don't forget to delete the table when you're done or you might incur "
+    #         "charges on your account."
+    #     )
 
-    print("\nThanks for using my custom DynamDB table!")
-    print("-" * 88)
+    # print("\nThanks for using my custom DynamDB table!")
+    # print("-" * 88)
         
 # Define DynamoDB resource and Movies instance
 dynamodb = boto3.resource("dynamodb")
