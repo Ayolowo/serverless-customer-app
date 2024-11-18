@@ -1,0 +1,133 @@
+[
+    {
+      "customerId": "CUST001",
+      "name": "Alice Johnson",
+      "email": "alice.johnson@example.com",
+      "phone": "+14155552671",
+      "address": {
+        "street": "123 Maple Street",
+        "city": "San Francisco",
+        "state": "CA",
+        "zip": "94105"
+      },
+      "createdAt": "2024-01-15T10:45:00Z"
+    },
+    {
+      "customerId": "CUST002",
+      "name": "Bob Smith",
+      "email": "bob.smith@example.com",
+      "phone": "+14155552672",
+      "address": {
+        "street": "456 Oak Avenue",
+        "city": "Seattle",
+        "state": "WA",
+        "zip": "98101"
+      },
+      "createdAt": "2023-12-10T14:20:00Z"
+    },
+    {
+      "customerId": "CUST003",
+      "name": "Catherine Lee",
+      "email": "catherine.lee@example.com",
+      "phone": "+14155552673",
+      "address": {
+        "street": "789 Pine Lane",
+        "city": "Austin",
+        "state": "TX",
+        "zip": "78701"
+      },
+      "createdAt": "2023-11-05T08:15:30Z"
+    },
+    {
+      "customerId": "CUST004",
+      "name": "David Kim",
+      "email": "david.kim@example.com",
+      "phone": "+14155552674",
+      "address": {
+        "street": "321 Birch Road",
+        "city": "Chicago",
+        "state": "IL",
+        "zip": "60601"
+      },
+      "createdAt": "2024-02-12T09:30:00Z"
+    },
+    {
+      "customerId": "CUST005",
+      "name": "Emma Brown",
+      "email": "emma.brown@example.com",
+      "phone": "+14155552675",
+      "address": {
+        "street": "654 Cedar Court",
+        "city": "Denver",
+        "state": "CO",
+        "zip": "80203"
+      },
+      "createdAt": "2024-03-01T11:00:00Z"
+    },
+    {
+      "customerId": "CUST006",
+      "name": "Frank Wilson",
+      "email": "frank.wilson@example.com",
+      "phone": "+14155552676",
+      "address": {
+        "street": "987 Elm Street",
+        "city": "Boston",
+        "state": "MA",
+        "zip": "02108"
+      },
+      "createdAt": "2023-10-20T16:45:00Z"
+    },
+    {
+      "customerId": "CUST007",
+      "name": "Grace Adams",
+      "email": "grace.adams@example.com",
+      "phone": "+14155552677",
+      "address": {
+        "street": "111 Spruce Drive",
+        "city": "Portland",
+        "state": "OR",
+        "zip": "97201"
+      },
+      "createdAt": "2024-04-18T13:20:00Z"
+    },
+    {
+      "customerId": "CUST008",
+      "name": "Hannah Davis",
+      "email": "hannah.davis@example.com",
+      "phone": "+14155552678",
+      "address": {
+        "street": "222 Willow Way",
+        "city": "Miami",
+        "state": "FL",
+        "zip": "33101"
+      },
+      "createdAt": "2024-05-05T19:00:00Z"
+    },
+    {
+      "customerId": "CUST009",
+      "name": "Ian Thomas",
+      "email": "ian.thomas@example.com",
+      "phone": "+14155552679",
+      "address": {
+        "street": "333 Aspen Boulevard",
+        "city": "Atlanta",
+        "state": "GA",
+        "zip": "30301"
+      },
+      "createdAt": "2024-06-01T07:10:00Z"
+    },
+    {
+      "customerId": "CUST010",
+      "name": "Julia Martinez",
+      "email": "julia.martinez@example.com",
+      "phone": "+14155552680",
+      "address": {
+        "street": "444 Cherry Lane",
+        "city": "Los Angeles",
+        "state": "CA",
+        "zip": "90001"
+      },
+      "createdAt": "2023-09-12T21:50:00Z"
+    }
+  ]
+  
