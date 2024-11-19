@@ -13,22 +13,30 @@ data "aws_iam_policy_document" "assume_role" {
 }
 
 # IAM role for aws Lambda to assume
-resource "aws_iam_role" "iam_role_lambda" {
-  name               = "iam_role_lambda"
+resource "aws_iam_role" "iamrolelambda" {
+  name               = "iamrolelambda"
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
 
 resource "aws_lambda_function" "terraform_function" {
   # If the file is not in the current working directory you will need to include a
   # path.module in the filename.
-  filename      = "${path.module}/Lambda/lambda_function.zip"
-  function_name = "movies_function"
-  role          = aws_iam_role.iam_role_lambda.arn
-  handler       = "lambda_function.lambda_handler"
+  filename      = "${path.module}/dependencies/appenv.zip"
+  function_name = "app_function"
+  role          = aws_iam_role.iamrolelambda.arn
+  handler       = "main.handler"
 
-  # source_code_hash = data.archive_file.lambda.output_base64sha256
+  runtime = "python3.12"
+}
 
-  runtime    = "python3.12"
-  depends_on = [aws_iam_role.iam_role_lambda]
+# Block to import RestAPI from AWS
+import {
+  to = aws_api_gateway_rest_api.app_function-API
+  id = "re918jufnj"
+}
+
+resource "aws_api_gateway_rest_api" "app_function-API" {
+  name = "app_function-API"
+
 }
 
