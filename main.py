@@ -42,6 +42,7 @@ class Customers:
                     ("email", customer["email"]),
                     ("phone", customer["phone"]),
                     ("address", customer["address"]),
+                    ("transactionHistoryUrl", customer["transactionHistoryUrl"]),
                     ("createdAt", customer["createdAt"]),
                 ])
                 for customer in customers
@@ -67,6 +68,7 @@ class Customers:
                     ("email", customer["email"]),
                     ("phone", customer["phone"]),
                     ("address", customer["address"]),
+                    ("transactionHistoryUrl", customer["transactionHistoryUrl"]),
                     ("createdAt", customer["createdAt"]),
                 ])
                 for customer in customers

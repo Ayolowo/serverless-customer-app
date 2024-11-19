@@ -116,8 +116,8 @@ class S3BucketManager:
     
 # Call the function to create the bucket
 if __name__ == "__main__":
-    bucket_name='movies-images-bucket'
-    file_list = ['toronto.jpg', 'toronto2.jpg', 'people.jpeg']
+    bucket_name='my-customer-data-bucket'
+    file_list = ['CUST001_transactions.csv', 'CUST002_transactions.csv', 'CUST003_transactions.csv']
     create_s3_bucket(bucket_name)
     upload_all_files(file_list, bucket_name)
     bucket_manager = S3BucketManager(bucket_name)
