@@ -21,7 +21,7 @@ resource "aws_iam_role" "iamrolelambda" {
 resource "aws_lambda_function" "terraform_function" {
   # If the file is not in the current working directory you will need to include a
   # path.module in the filename.
-  filename      = "${path.module}/dependencies/appenv.zip"
+  filename      = "${path.module}/dependencies/app.zip"
   function_name = "app_function"
   role          = aws_iam_role.iamrolelambda.arn
   handler       = "main.handler"
