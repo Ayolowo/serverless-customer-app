@@ -9,9 +9,7 @@ import os
 # Used to track/log events that happen as your program runs
 logger = logging.getLogger(__name__)
 
-# Create S3 bucket for movie images
-#bucket_name = input("Plese input your bucket_name: ")
-#region = input("Please input desired region: ")
+# Create S3 bucket for customer csv files
 def bucket_exists(bucket_name, region='us-east-1'):
     s3 = boto3.client('s3')
     try:
