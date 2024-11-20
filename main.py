@@ -94,11 +94,11 @@ customers_instance = Customers(dynamodb, table_name)
 #     return {"message": "Hello from FastAPI"}
 
 @app.get("/customers", response_model=List[dict])
-def get_all_customers():
+async def get_all_customers():
     return customers_instance.get_all_customers()
 
 @app.get("/customers/{customerId}", response_model=List[dict])
-def query_customer(customerId: str):
+async def query_customer(customerId: str):
     customers = customers_instance.query_customer(customerId)
     if not customers:
         raise HTTPException(status_code=404, detail="No customer details found for the specified customerId.")
