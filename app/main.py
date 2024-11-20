@@ -83,7 +83,7 @@ class Customers:
             )
             raise
 
-# Initialize Movies instance
+# Initialize customers instance
 customers_instance = Customers(dynamodb, table_name)
 
 # Define FastAPI routes
