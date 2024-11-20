@@ -1,6 +1,6 @@
 # Serverless Customer Data Management System
 
-![Serverless Customer Diagram](./serverless-customer-diagram.png)
+![Serverless Customer Diagram](./app/serverless-customer-diagram.png)
 
 ## About This Project
 
