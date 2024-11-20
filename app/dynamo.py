@@ -67,7 +67,7 @@ class Customers:
             raise
         else:
             return self.table
-
+    # writing (inserting) a list of customer data into the DynamoDB table in batch mode
     def write_batch(self, customers):
         try:
             with self.table.batch_writer() as writer:
@@ -81,7 +81,7 @@ class Customers:
                 err.response["Error"]["Message"],
             )
             raise
-        
+    # Delete table instead of manually deleting it on the cloud  
     def delete_table(self):
         """
         Deletes the table.
@@ -97,7 +97,7 @@ class Customers:
                 err.response["Error"]["Message"],
             )
             raise
-
+#  load customer data from a JSON file into the Python program
 def load_customer_data(json_file):
     try:
         with open(json_file) as file:
@@ -112,7 +112,7 @@ def run_scenario(customers_table, json_file, dyn_resource):
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
     
     print("-" * 88)
-    print("Welcome to the {insert company name} customer data store.")
+    print("Welcome to the {insert company name} customer data management store.")
     print("-" * 88)
 
     customers = Customers(dyn_resource)
@@ -139,8 +139,6 @@ def run_scenario(customers_table, json_file, dyn_resource):
             "Don't forget to delete the table when you're done or you might incur "
             "charges on your account."
         )
-
-    print("\nThanks for using my custom DynamDB table!")
     print("-" * 88)
     
 if __name__ == "__main__":
