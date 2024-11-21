@@ -10,8 +10,7 @@ from question import Question
 # Used to track/log events that happen as your program runs
 logger = logging.getLogger(__name__)
 
-    
-########################################################################
+# Customer class
 class Customers:
     """Encapsulates an Amazon DynamoDB table of customer data."""
 
