@@ -111,7 +111,7 @@ def run_scenario(customers_table, json_file, dyn_resource):
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
     
     print("-" * 88)
-    print("Welcome to the {insert company name} customer data management store.")
+    print("Welcome to {insert company name} customer data management store.")
     print("-" * 88)
 
     customers = Customers(dyn_resource)
